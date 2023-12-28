@@ -1,0 +1,202 @@
+﻿@page "/itemForm"
+@page "/itemForm/{Id:int}"
+@using ItemStoreOriginal.Shared.Services
+@using ItemStoreOriginal.Shared.ViewModels
+@using ItemStoreOriginal.Shared.Models
+@using Blazored.LocalStorage;
+@inject ILocalStorageService LocalStorageSer
+@implements IDisposable
+@inject IManufacturedItemsService ManufacturedItemsService
+
+<PageTitle>Item Form</PageTitle>
+
+<h3>Item Form: Add new item</h3>
+<div class="row">
+    <EditForm FormName="ItemForm" Model="@SubmitItem" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="@HandleInvalidSubmit" class="col-6">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div class="form-group mt-1">
+            <label>Name</label>
+            <InputText id="Name" placeholder="Enter the name" @bind-Value="SubmitItem.Name" class="form-control" />
+            <ValidationMessage For="@(() => SubmitItem.Name)" />
+        </div>
+        <div class="form-group mt-1">
+            <label>Description</label>
+            <InputText id="Description" placeholder="Enter the description" @bind-Value="SubmitItem.Description" class="form-control" />
+            <ValidationMessage For="@(() => SubmitItem.Description)" />
+        </div>
+        <div class="form-group mt-1">
+            <label>Weight</label>
+            <InputNumber id="Weight" placeholder="Enter the weight" TValue="decimal" @bind-Value="SubmitItem.Weight" class="form-control" />
+        </div>
+        <div class="form-group mt-1">
+            <label>Price</label>
+            <InputNumber id="Price" placeholder="Enter the price" TValue="decimal" @bind-Value="SubmitItem.Price" class="form-control" />
+            <ValidationMessage For="@(() => SubmitItem.Price)" />
+        </div>
+        <div class="form-group mt-1">
+            <label>Is Active</label>
+            <InputCheckbox id="IsActive" @bind-Value="@SubmitItem.IsActive" />
+        </div>
+        <div class="form-group mt-1">
+            <label>Manufacture Date</label>
+            <InputDate id="ManufacturedDate" placeholder="Enter the manufactured date" TValue="DateOnly" @bind-Value="SubmitItem.ManufacturedDate" class="form-control" />
+        </div>
+
+        <div class="form-group mt-1">
+            <label>Format</label>
+            <InputRadioGroup id="Format" TValue="int" @bind-Value="SubmitItem.Format" class="form-control">
+                <div class="row">
+                    <div class="col-4">
+                        <label>Metallic</label>
+                        <InputRadio TValue="ItemFormat" Value="ItemFormat.Metallic" />
+                    </div>
+                    <div class="col-4">
+                        <label>NonMetallic</label>
+                        <InputRadio TValue="ItemFormat" Value="ItemFormat.NonMetallic" />
+                    </div>
+                    <div class="col-4">
+                        <label>Both</label>
+                        <InputRadio TValue="ItemFormat" Value="ItemFormat.Both" />
+                    </div>
+                </div>
+            </InputRadioGroup>
+        </div>
+
+        <div class="form-group mt-1">
+            <label>Category</label>
+            <InputSelect id="Category" TValue="string" @bind-Value="SubmitItem.Category" class="form-control">
+                <option disabled value="" selected>Select Category</option>
+                <option value="HomeUse">Home Use</option>
+                <option value="Laboratory">Laboratory</option>
+                <option value="Kitchen">Kitchen</option>
+            </InputSelect>
+        </div>
+        <div class="mt-3 mb-3">
+            <input class="btn btn-primary" type="submit" value="Submit" />
+        </div>
+    </EditForm>
+
+</div>
+
+
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+    [SupplyParameterFromForm(FormName = "ItemForm")]
+    public SubmitItem SubmitItem { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        SubmitItem ??= new SubmitItem();
+
+        var _manufacturedItems = new List<ManufacturedItem>();
+        var itemList = await ManufacturedItemsService.GetAllManufacturedItemsAsync();
+
+        if (Id > 0)
+        {
+            var obj = itemList.FirstOrDefault(x => x.Id == Id);
+            if (obj != null)
+            {
+                SubmitItem.Format = 0;
+                SubmitItem.Price = obj.Price ?? 0;
+                SubmitItem.Category = obj.Category ?? "";
+                SubmitItem.Name = obj.Name ?? "";
+                SubmitItem.Description = obj.Description ?? "";
+                SubmitItem.Weight = obj.Weight ?? 0;
+                SubmitItem.IsActive = obj.IsActive ?? false;
+            }
+        }
+
+    }
+
+    private async void HandleValidSubmit()
+    {
+        Console.WriteLine("Form Submitted successfully");
+        Console.WriteLine($"Item Name - {SubmitItem.Name}");
+        Console.WriteLine($"Description - {SubmitItem.Description}");
+        Console.WriteLine($"Category - {SubmitItem.Category}");
+        Console.WriteLine($"Manufactured Date - {SubmitItem.ManufacturedDate}");
+        Console.WriteLine($"Weight - {SubmitItem.Weight}");
+        Console.WriteLine($"Availability - {SubmitItem.IsActive}");
+        Console.WriteLine($"Item Price - {SubmitItem.Price}");
+
+        ItemStoreOriginal.Shared.Models.Item item = new ItemStoreOriginal.Shared.Models.Item();
+        item.IsActive = SubmitItem.IsActive;
+        item.Name = SubmitItem.Name;
+        item.Description = SubmitItem.Description;
+        item.Category = SubmitItem.Category;
+        item.ManufacturedDate = DateTime.Now;
+        item.Weight = SubmitItem.Weight;
+        item.Price = SubmitItem.Price;
+
+        ManufacturedItemsService service = new ManufacturedItemsService();
+        var itemResult = await service.InsertManufacturedItemsAsync(item);
+
+        Console.WriteLine($"Success");
+    }
+
+    enum ItemFormat
+    {
+        Metallic,
+        NonMetallic,
+        Both
+    }
+
+    private void OnFileSelected(InputFileChangeEventArgs e)
+    {
+        var chosenFile = e.File;
+        Console.WriteLine($"Chosen File Name - {chosenFile.Name}");
+        Console.WriteLine($"File Size - {chosenFile.Size}");
+    }
+
+    private void HandleInvalidSubmit()
+    {
+
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        SetupTimer();
+        await CheckUISavedStateAsync();
+    }
+
+
+
+    string key = "manufacturedItem";
+    private System.Timers.Timer _saveTimer = new System.Timers.Timer();
+
+    private async Task SaveUISavedStateAsync()
+    {
+        await LocalStorageSer.SetItemAsync(key, SubmitItem);
+    }
+
+    private async Task CheckUISavedStateAsync()
+    {
+        if (await LocalStorageSer.ContainKeyAsync(key))
+        {
+            SubmitItem = await LocalStorageSer.GetItemAsync<SubmitItem>(key);
+            Console.WriteLine(SubmitItem);
+        }
+    }
+
+    private void SetupTimer()
+    {
+        _saveTimer.Interval = 10_000;
+        _saveTimer.Elapsed += async (sender, e) =>
+        {
+            await SaveUISavedStateAsync();
+        };
+        _saveTimer.Start();
+    }
+
+
+    public void Dispose()
+    {
+        _saveTimer.Stop();
+        _saveTimer.Dispose();
+    }
+}

@@ -1,0 +1,37 @@
+﻿@page "/person"
+
+
+
+<h3>Person</h3>
+
+<EditForm FormName="EmpForm" Model=@Emp OnValidSubmit=@ValidFormSubmitted>
+    <div class="form-group">
+        <label for="Name">Name</label>
+        <InputText @bind-Value=Emp.Name class="form-control" id="Name" />
+    </div>
+    <div class="form-group">
+        <label for="Age">Age</label>
+        <InputNumber @bind-Value=Emp.Age class="form-control" id="Age" />
+    </div>
+    <input type="submit" class="btn btn-primary" value="Save" />
+</EditForm>
+
+@code {
+    [SupplyParameterFromForm(FormName = "EmpForm")]
+    public Emp Emp { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Emp ??= new Emp();
+    }
+
+    void ValidFormSubmitted(EditContext editContext)
+    {
+        var aaa = Emp;
+    }
+
+    void InvalidFormSubmitted(EditContext editContext)
+    {
+        
+    }
+}

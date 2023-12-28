@@ -1,0 +1,91 @@
+﻿@rendermode RenderMode.InteractiveWebAssembly
+@inject NavigationManager NavManager
+@* @implements IDisposable *@
+
+<div 
+    style="padding: 5px;" 
+class="card">
+    <h6>@ManufacturedItem?.Name</h6>
+    <p>Description : @ManufacturedItem?.Description</p>
+    <p>Manufactured Date : @ManufacturedItem?.ManufacturedDate</p>
+    <button type="button" @onclick="AddToCart" class="btn btn-sm btn-primary main-button">Add</button>
+   @*  @if (ShowButton)
+    {
+        
+    } *@
+    <button type="submit" onclick="TestMeth" class="btn btn-sm btn-primary main-button">Add</button>
+
+</div>
+
+@code
+{
+    protected void TestMeth()
+    {
+        Console.WriteLine("Test......");
+    }
+
+    [Parameter]
+    public ManufacturedItem? ManufacturedItem { get; set; }
+    [Parameter]
+    public bool ShowButton { get; set; } = true;
+
+    [Parameter]
+    public EventCallback<ManufacturedItem?> OnAddToCartClicked { get; set; }
+
+    protected async Task AddToCart()
+    {
+        await OnAddToCartClicked.InvokeAsync(ManufacturedItem);
+        Console.WriteLine("Add To Cart Clicked....");
+    }
+
+    
+    private void NavigateToItemDetails()
+    {
+        var url = $"/Item/{ManufacturedItem.Id}";
+        NavManager.NavigateTo(url);
+    }
+
+
+
+    // styles stuffs 
+
+    // [CascadingParameter(Name = "BackgroundStyle")]
+    // public string? BGStyle { get; set; }
+
+
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     Console.WriteLine($"OnInitializedAsync - BGStyle is {BGStyle}");
+    // }
+
+    // public override async Task SetParametersAsync(ParameterView parameters)
+    // {
+    //     Console.WriteLine("SetParametersAsync fired");
+    //     if (parameters.TryGetValue<string>(nameof(BGStyle), out var value))
+    //     {
+    //         Console.WriteLine($"SetParametersAsync - BGStyle is {BGStyle}");
+    //         if (string.IsNullOrWhiteSpace(value))
+    //         {
+    //             BGStyle = "background-color:green";
+    //         }
+    //     }
+    //     await base.SetParametersAsync(parameters);
+    // }
+
+    // protected override void OnParametersSet()
+    // {
+    //     Console.WriteLine($"OnParametersSet - BGStyle is {BGStyle}");
+    // }
+
+    // protected async override Task OnAfterRenderAsync(bool firstRender)
+    // {
+    //     //Call Javascript to change DOM
+    //     Console.WriteLine($"OnAfterRenderAsync - firstRender is {firstRender} and BGStyle is {BGStyle}");
+    // }
+
+    // public void Dispose()
+    // {
+    //     //Free resources here
+    //     Console.WriteLine($"Dispose - BGStyle is {BGStyle}");
+    // }
+}

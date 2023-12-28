@@ -1,0 +1,20 @@
+﻿@page "/calldotnet"
+@rendermode RenderMode.InteractiveWebAssembly
+
+<PageTitle>Call Dot Net</PageTitle>
+<h3>CallDotNet</h3>
+
+<p>
+    <button onclick="returnArrayAsync()">Call Dot Net Static Method</button>
+</p>
+<p>
+    Results visible in Developer tools cponsole
+</p>
+
+@code {
+    [JSInvokable]
+    public static Task<int[]> ReturnArrayAsync()
+    {
+        return Task.FromResult(new int[] { 1, 2, 3 });
+    }
+}

@@ -1,0 +1,64 @@
+﻿@page "/itemsStore"
+@rendermode RenderMode.InteractiveWebAssembly
+
+@inject IManufacturedItemsService ManufacturedItemsService
+
+<PageTitle>ItemsStore</PageTitle>
+
+<NavigationLock ConfirmExternalNavigation="true" />
+
+<h1>ItemsStore</h1>
+
+<h5>Items Available</h5>
+<div style="display:flex">
+    @foreach (var manufacturedItem in _ManufacturedItems)
+    {
+        <div class="pad-ttt">
+            <ItemCard ManufacturedItem="manufacturedItem"
+                      OnAddToCartClicked="AddToCartParent" />
+        </div>
+        
+    }
+</div>
+
+
+<h3 class="mt-6">Cart</h3>
+<ul>
+    @foreach (var mfdItem in _ManufacturedItemsInCart)
+    {
+        <li>@mfdItem.Name</li>
+    }
+</ul>
+<h4></h4>
+
+@code
+{
+    private List<ManufacturedItem> _ManufacturedItems = new List<ManufacturedItem>();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        _ManufacturedItems = new List<ManufacturedItem>();
+        var itemList = await ManufacturedItemsService.GetAllManufacturedItemsAsync();
+        itemList.ForEach(x =>
+        {
+            var obj = new ManufacturedItem();
+            obj.ManufacturedDate = DateTime.Now; // x.ManufacturedDate;
+            obj.Description = x.Description;
+            obj.Category = x.Category;
+            obj.Format = x.Format!=null ? (int)x.Format: 0;
+            obj.IsActive = x.IsActive??false;
+            obj.Price = x.Price??0;
+            obj.Weight = (float)x.Weight;
+            obj.Name = x.Name;
+
+            _ManufacturedItems.Add(obj);
+        });
+    }
+    
+    private List<ManufacturedItem> _ManufacturedItemsInCart = new List<ManufacturedItem>();
+    
+    private void AddToCartParent(ManufacturedItem selectedMfdItem)
+    {
+        _ManufacturedItemsInCart.Add(selectedMfdItem);
+    }
+}

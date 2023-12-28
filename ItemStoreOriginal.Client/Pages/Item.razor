@@ -1,0 +1,25 @@
+﻿
+
+
+
+<h3>Item</h3>
+<div class="card">
+    <h6>Name: @ManufacturedItem?.Name</h6>
+    <p>Description: @ManufacturedItem?.Description</p>
+    <p>Manufactured Date: @ManufacturedItem?.ManufacturedDate</p>
+    <button type="submit" @onclick="AddCart">+</button>
+</div>
+
+@code {
+    [Parameter]
+    public ManufacturedItem? ManufacturedItem{ get; set; }
+    [Parameter]
+    public bool showButton { get; set; } = true;
+    [Parameter]
+    public EventCallback<ManufacturedItem?> OnAddToCartClicked { get; set; }
+
+    private void AddCart()
+    {
+        Console.WriteLine("testttt");
+    }
+}

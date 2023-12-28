@@ -1,5 +1,7 @@
+using Blazored.LocalStorage;
 using ItemStoreOriginal.Client.Pages;
 using ItemStoreOriginal.Components;
+using ItemStoreOriginal.Shared.Services;
 
 namespace ItemStoreOriginal
 {
@@ -12,6 +14,9 @@ namespace ItemStoreOriginal
             // Add services to the container.
             builder.Services.AddRazorComponents()
                 .AddInteractiveWebAssemblyComponents();
+
+            builder.Services.AddScoped<IManufacturedItemsService, ManufacturedItemsService>();
+            builder.Services.AddBlazoredLocalStorage();
 
             var app = builder.Build();
 

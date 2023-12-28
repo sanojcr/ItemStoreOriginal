@@ -15,6 +15,14 @@
 <body>
     <Routes />
     <script src="_framework/blazor.web.js"></script>
+    <script>
+        window.returnArrayAsync=()=>{
+            Dotnet.InvokeMethodAsync('ItemStoreOriginal.Client', 'ReturnArrayAsync')
+                .then(data => {
+                    console.log(data);
+                });
+        }
+    </script>
 </body>
 
 </html>
