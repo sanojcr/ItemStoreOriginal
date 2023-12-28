@@ -25,5 +25,16 @@ namespace ItemStoreOriginal.Shared.Services
 
             return item;
         }
+
+        public async Task<Item> UpdateManufacturedItemsAsync(int id,Item item)
+        {
+            ItemStoreOriginal.Shared.Models.EFCoreStoreDB nwDb = new ItemStoreOriginal.Shared.Models.EFCoreStoreDB();
+            var obj = await nwDb.Items.FindAsync(id);
+            obj.Description = item.Description;
+            obj.Name = item.Name;
+            await nwDb.SaveChangesAsync();
+
+            return item;
+        }
     }
 }

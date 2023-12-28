@@ -5,16 +5,53 @@
 <div 
     style="padding: 5px;" 
 class="card">
-    <h6>@ManufacturedItem?.Name</h6>
-    <p>Description : @ManufacturedItem?.Description</p>
-    <p>Manufactured Date : @ManufacturedItem?.ManufacturedDate</p>
-    <button type="button" @onclick="AddToCart" class="btn btn-sm btn-primary main-button">Add</button>
-   @*  @if (ShowButton)
-    {
-        
-    } *@
-    <button type="submit" onclick="TestMeth" class="btn btn-sm btn-primary main-button">Add</button>
+    <div class="card-header">
+        <h5>
+            <strong>@ManufacturedItem?.Name</strong>
+        </h5>
+    </div>
+    <div style="padding-left: 10px; padding-right:10px;">
+        <h6>
+            <strong>Description</strong>
+        </h6>
+        <p> @ManufacturedItem?.Description</p>
+    </div>
+    <div style="padding-left: 10px; padding-right:10px;">
+        <h6>
+            <strong>
+                Manufactured Date
+            </strong>
+        </h6>
+        <p>@ManufacturedItem?.ManufacturedDate.ToLongDateString()</p>
+    </div>
+    <div style="padding-left: 10px; padding-right:10px;">
+        <h6>
+            <strong>
+                Is Active
+            </strong>
+        </h6>
+        <p>@ManufacturedItem?.IsActive</p>
+    </div>
+    <div style="padding-left: 10px; padding-right:10px;">
+        <h6>
+            <strong>
+                Category
+            </strong>
+        </h6>
+        <p>@ManufacturedItem?.Category</p>
+    </div>
+    <div style="padding-left: 10px; padding-right:10px;">
+        <h6>
+            <strong>
+                Price
+            </strong>
+        </h6>
+        <p>@ManufacturedItem?.Price $</p>
+    </div>
 
+    <div class="card-footer">
+        <button type="button" @onclick="AddToCart" class="btn btn-sm btn-primary main-button">Add</button>
+    </div>
 </div>
 
 @code

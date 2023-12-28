@@ -8,9 +8,11 @@
 @implements IDisposable
 @inject IManufacturedItemsService ManufacturedItemsService
 
-<PageTitle>Item Form</PageTitle>
+<PageTitle>Create</PageTitle>
 
-<h3>Item Form: Add new item</h3>
+<h1>Create</h1>
+Create or update an item.
+
 <div class="row">
     <EditForm FormName="ItemForm" Model="@SubmitItem" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="@HandleInvalidSubmit" class="col-6">
         <DataAnnotationsValidator />
@@ -66,7 +68,7 @@
         <div class="form-group mt-1">
             <label>Category</label>
             <InputSelect id="Category" TValue="string" @bind-Value="SubmitItem.Category" class="form-control">
-                <option disabled value="" selected>Select Category</option>
+                <option disabled value="">Select Category</option>
                 <option value="HomeUse">Home Use</option>
                 <option value="Laboratory">Laboratory</option>
                 <option value="Kitchen">Kitchen</option>
@@ -99,7 +101,7 @@
         if (Id > 0)
         {
             var obj = itemList.FirstOrDefault(x => x.Id == Id);
-            if (obj != null)
+            if (obj != null && SubmitItem.Name == null)
             {
                 SubmitItem.Format = 0;
                 SubmitItem.Price = obj.Price ?? 0;
@@ -133,8 +135,18 @@
         item.Weight = SubmitItem.Weight;
         item.Price = SubmitItem.Price;
 
-        ManufacturedItemsService service = new ManufacturedItemsService();
-        var itemResult = await service.InsertManufacturedItemsAsync(item);
+        if (Id > 0)
+        {
+            ManufacturedItemsService service = new ManufacturedItemsService();
+            var itemResult = await service.UpdateManufacturedItemsAsync(Id,item);
+        }
+        else
+        {
+            ManufacturedItemsService service = new ManufacturedItemsService();
+            var itemResult = await service.InsertManufacturedItemsAsync(item);
+        }
+
+        
 
         Console.WriteLine($"Success");
     }

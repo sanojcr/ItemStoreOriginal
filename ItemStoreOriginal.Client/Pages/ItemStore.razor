@@ -3,21 +3,19 @@
 
 @inject IManufacturedItemsService ManufacturedItemsService
 
-<PageTitle>ItemsStore</PageTitle>
+<PageTitle>Store</PageTitle>
 
 <NavigationLock ConfirmExternalNavigation="true" />
 
-<h1>ItemsStore</h1>
-
-<h5>Items Available</h5>
+<h1>Store</h1>
+These are the available items.
 <div style="display:flex">
     @foreach (var manufacturedItem in _ManufacturedItems)
     {
         <div class="pad-ttt">
             <ItemCard ManufacturedItem="manufacturedItem"
-                      OnAddToCartClicked="AddToCartParent" />
+                OnAddToCartClicked="AddToCartParent" />
         </div>
-        
     }
 </div>
 
@@ -34,7 +32,7 @@
 @code
 {
     private List<ManufacturedItem> _ManufacturedItems = new List<ManufacturedItem>();
-    
+
     protected override async Task OnInitializedAsync()
     {
         _ManufacturedItems = new List<ManufacturedItem>();
@@ -53,6 +51,16 @@
 
             _ManufacturedItems.Add(obj);
         });
+
+        _ManufacturedItemsInCart.Add(
+            new ManufacturedItem()
+                {
+                    Category = "Sample",
+                    Description = "Sample Desc",
+                    Name="Sample Nmae",
+                    IsActive = true,
+                }
+        );
     }
     
     private List<ManufacturedItem> _ManufacturedItemsInCart = new List<ManufacturedItem>();

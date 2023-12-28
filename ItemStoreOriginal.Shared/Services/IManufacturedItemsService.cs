@@ -11,5 +11,6 @@ namespace ItemStoreOriginal.Shared.Services
     {
         public Task<List<Item>> GetAllManufacturedItemsAsync();
         public Task<Item> InsertManufacturedItemsAsync(Item item);
+        public Task<Item> UpdateManufacturedItemsAsync(int id, Item item);
     }
 }
